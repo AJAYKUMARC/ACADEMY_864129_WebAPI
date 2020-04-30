@@ -8,8 +8,8 @@ namespace ACADEMY_864129_WebAPI.Services
 {
     public interface ITableStorage
     {
-        IList<DeviceData> GetTelemetryData(int days);
+        Task<IList<DeviceData>> GetTelemetryData(int days);
 
-        IList<DeviceData> GetAlertData(int days);
+        Task<IList<DeviceData>> GetAlertData(int days);
     }
 }

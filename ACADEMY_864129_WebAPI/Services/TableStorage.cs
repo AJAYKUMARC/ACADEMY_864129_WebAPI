@@ -17,33 +17,47 @@ namespace ACADEMY_864129_WebAPI.Services
             this.appSettings = appSettings.Value;
         }
 
-        public IList<DeviceData> GetAlertData(int days)
+        public async Task<IList<DeviceData>> GetAlertData(int days)
         {
-            return RetriveData("AlertData");
+            return await RetriveData("AlertData");
         }
 
-        public IList<DeviceData> GetTelemetryData(int days)
+        public async Task<IList<DeviceData>> GetTelemetryData(int days)
         {
-            return RetriveData("TelemetryData");
+            return await RetriveData("TelemetryData");
         }
 
-        private IList<DeviceData> RetriveData(string GroupByParameter)
+        private async Task<IList<DeviceData>> RetriveData(string GroupByParameter)
         {
-            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(appSettings.StorageAccountConnectionString);
+            try
+            {
+                var deviceData = new List<DeviceData>();
+                TableContinuationToken token = null;
+                CloudStorageAccount storageAccount = CloudStorageAccount.Parse(appSettings.StorageAccountConnectionString);
+                CloudTableClient client = storageAccount.CreateCloudTableClient();
+                CloudTable table = client.GetTableReference(appSettings.TableName);
+                var condition = TableQuery.GenerateFilterCondition("GroupData", QueryComparisons.Equal, GroupByParameter);
+                var query = new TableQuery().Where(condition);
+                do
+                {
+                    var result = await table.ExecuteQuerySegmentedAsync(query, token);
+                    token = result.ContinuationToken;
+                    var x=result.Results as List<DeviceData>;
+                    deviceData.AddRange(result.Results as List<DeviceData>);
+                }
+                while (token != null);
 
-            CloudTableClient client = storageAccount.CreateCloudTableClient();
 
-            CloudTable table = client.GetTableReference(appSettings.TableName);
-
-            bool b = table.ExistsAsync().Result;
-            var condition = TableQuery.GenerateFilterCondition("GroupData", QueryComparisons.Equal, GroupByParameter);
-            var query = new TableQuery().Where(condition);
-            var result = table.ExecuteQuerySegmentedAsync(query, null);
-
-            TableOperation retOp = TableOperation.Retrieve("DeviceId", "CaptureTime");
-            TableResult tr = table.ExecuteAsync(retOp).Result;
-            var RESULT = tr.Result as DeviceData;
-            return new List<DeviceData>();
+                //bool b = table.ExistsAsync().Result;
+                //TableOperation retOp = TableOperation.Retrieve("DeviceId", "CaptureTime");
+                //TableResult tr = table.ExecuteAsync(retOp).Result;
+                //var RESULT = tr.Result as DeviceData;
+                return new List<DeviceData>();
+            }
+            catch (Exception exception)
+            {
+                throw;
+            }
         }
     }
 }
