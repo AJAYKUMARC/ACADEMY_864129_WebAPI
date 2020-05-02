@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,12 +20,12 @@ namespace ACADEMY_864129_WebAPI.Services
 
         public async Task<IList<DeviceData>> GetAlertData(int days)
         {
-            return await RetriveData("AlertData");
+            return await RetriveData("Alert");
         }
 
         public async Task<IList<DeviceData>> GetTelemetryData(int days)
         {
-            return await RetriveData("TelemetryData");
+            return await RetriveData("OK");
         }
 
         private async Task<IList<DeviceData>> RetriveData(string GroupByParameter)
@@ -36,22 +37,15 @@ namespace ACADEMY_864129_WebAPI.Services
                 CloudStorageAccount storageAccount = CloudStorageAccount.Parse(appSettings.StorageAccountConnectionString);
                 CloudTableClient client = storageAccount.CreateCloudTableClient();
                 CloudTable table = client.GetTableReference(appSettings.TableName);
-                var condition = TableQuery.GenerateFilterCondition("GroupData", QueryComparisons.Equal, GroupByParameter);
+                var condition = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, GroupByParameter);
                 var query = new TableQuery().Where(condition);
-                do
+                var result = await table.ExecuteQuerySegmentedAsync(query, token);
+                foreach (var data in result.Results)
                 {
-                    var result = await table.ExecuteQuerySegmentedAsync(query, token);
-                    token = result.ContinuationToken;
-                    var x=result.Results as List<DeviceData>;
-                    deviceData.AddRange(result.Results as List<DeviceData>);
+                    var dictionaryValues = data.Properties;                   
+                    deviceData.AddRange(data.Properties as List<DeviceData>);
                 }
-                while (token != null);
-
-
-                //bool b = table.ExistsAsync().Result;
-                //TableOperation retOp = TableOperation.Retrieve("DeviceId", "CaptureTime");
-                //TableResult tr = table.ExecuteAsync(retOp).Result;
-                //var RESULT = tr.Result as DeviceData;
+                deviceData.AddRange(result.Results as List<DeviceData>);
                 return new List<DeviceData>();
             }
             catch (Exception exception)
