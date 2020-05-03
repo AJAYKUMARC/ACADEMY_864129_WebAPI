@@ -20,29 +20,34 @@ namespace ACADEMY_864129_WebAPI.Services
 
         public async Task<IList<DeviceData>> GetAlertData(int days)
         {
-            return await RetriveData("Alert", days);
-        }
-
-        public async Task<IList<DeviceData>> GetNormalData(int days)
-        {
-            return await RetriveData(null, days);
+            return await RetrieveData("Alert", days);
         }
 
         /// <summary>
-        /// Gets the TelemetryData
+        /// Gets all the Positive Data (No Alert Data will come)
+        /// </summary>
+        /// <param name="days"></param>
+        /// <returns></returns>
+        public async Task<IList<DeviceData>> GetNormalData(int days)
+        {
+            return await RetrieveData("OK", days);
+        }
+
+        /// <summary>
+        /// Gets the TelemetryData (Alert + Positive Data)
         /// </summary>
         /// <param name="days"></param>
         /// <returns></returns>
         public async Task<IList<DeviceData>> GetTelemetryData(int days)
         {
-            return await RetriveData("OK", days);
+            return await RetrieveData(null, days);
         }
         /// <summary>
         /// Query the Azure Table and Gets the Data
         /// </summary>
-        /// <param name="GroupByParameter">PartitionKey Value</param>
+        /// <param name="groupByParameter">PartitionKey Value</param>
         /// <returns>List of Device Data</returns>
-        private async Task<IList<DeviceData>> RetriveData(string GroupByParameter, int days)
+        private async Task<IList<DeviceData>> RetrieveData(string groupByParameter, int days)
         {
             try
             {
@@ -52,9 +57,9 @@ namespace ACADEMY_864129_WebAPI.Services
                 CloudTableClient client = storageAccount.CreateCloudTableClient();
                 CloudTable table = client.GetTableReference(appSettings.TableName);
                 var partitionCondition = string.Empty;
-                if (GroupByParameter != null)
+                if (groupByParameter != null)
                 {
-                    partitionCondition = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, GroupByParameter);
+                    partitionCondition = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, groupByParameter);
                 }
                 else
                 {

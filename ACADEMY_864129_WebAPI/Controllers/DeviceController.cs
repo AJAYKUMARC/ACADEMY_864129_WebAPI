@@ -16,23 +16,23 @@ namespace ACADEMY_864129_WebAPI.Controllers
             this.tableStorage = tableStorage;
         }
         [HttpGet("GetTelemetryData")]
-        public IActionResult GetTelemetryData([FromQuery] int days)
+        public async Task<IActionResult> GetTelemetryData([FromQuery] int days)
         {
-            var telemetryData = tableStorage.GetTelemetryData(days);
+            var telemetryData = await tableStorage.GetTelemetryData(days);
             return Ok(telemetryData);
         }
 
         [HttpGet("GetNormalData")]
-        public IActionResult GetPositiveData([FromQuery] int days)
+        public async Task<IActionResult> GetPositiveData([FromQuery] int days)
         {
-            var telemetryData = tableStorage.GetNormalData(days);
+            var telemetryData = await tableStorage.GetNormalData(days);
             return Ok(telemetryData);
         }
 
         [HttpGet("GetAlertData")]
-        public IActionResult GetAlertData([FromQuery] int days)
+        public async Task<IActionResult> GetAlertData([FromQuery] int days)
         {
-            var alertData = tableStorage.GetAlertData(30);
+            var alertData = await tableStorage.GetAlertData(30);
             return Ok(alertData);
         }
 
