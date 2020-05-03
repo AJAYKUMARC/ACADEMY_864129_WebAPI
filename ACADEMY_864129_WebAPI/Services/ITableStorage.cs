@@ -11,5 +11,7 @@ namespace ACADEMY_864129_WebAPI.Services
         Task<IList<DeviceData>> GetTelemetryData(int days);
 
         Task<IList<DeviceData>> GetAlertData(int days);
+
+        Task<IList<DeviceData>> GetNormalData(int days);
     }
 }

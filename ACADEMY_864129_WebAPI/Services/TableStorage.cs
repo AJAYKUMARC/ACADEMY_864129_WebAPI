@@ -20,15 +20,29 @@ namespace ACADEMY_864129_WebAPI.Services
 
         public async Task<IList<DeviceData>> GetAlertData(int days)
         {
-            return await RetriveData("Alert");
+            return await RetriveData("Alert", days);
         }
 
+        public async Task<IList<DeviceData>> GetNormalData(int days)
+        {
+            return await RetriveData(null, days);
+        }
+
+        /// <summary>
+        /// Gets the TelemetryData
+        /// </summary>
+        /// <param name="days"></param>
+        /// <returns></returns>
         public async Task<IList<DeviceData>> GetTelemetryData(int days)
         {
-            return await RetriveData("OK");
+            return await RetriveData("OK", days);
         }
-
-        private async Task<IList<DeviceData>> RetriveData(string GroupByParameter)
+        /// <summary>
+        /// Query the Azure Table and Gets the Data
+        /// </summary>
+        /// <param name="GroupByParameter">PartitionKey Value</param>
+        /// <returns>List of Device Data</returns>
+        private async Task<IList<DeviceData>> RetriveData(string GroupByParameter, int days)
         {
             try
             {
@@ -37,16 +51,27 @@ namespace ACADEMY_864129_WebAPI.Services
                 CloudStorageAccount storageAccount = CloudStorageAccount.Parse(appSettings.StorageAccountConnectionString);
                 CloudTableClient client = storageAccount.CreateCloudTableClient();
                 CloudTable table = client.GetTableReference(appSettings.TableName);
-                var condition = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, GroupByParameter);
-                var query = new TableQuery().Where(condition);
-                var result = await table.ExecuteQuerySegmentedAsync(query, token);
-                foreach (var data in result.Results)
+                var partitionCondition = string.Empty;
+                if (GroupByParameter != null)
                 {
-                    var dictionaryValues = data.Properties;                   
-                    deviceData.AddRange(data.Properties as List<DeviceData>);
+                    partitionCondition = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, GroupByParameter);
                 }
-                deviceData.AddRange(result.Results as List<DeviceData>);
-                return new List<DeviceData>();
+                else
+                {
+                    var cd1 = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, "OK");
+                    var cd2 = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, "Alert");
+                    partitionCondition = TableQuery.CombineFilters(cd1, TableOperators.Or, cd2);
+
+                }
+                var dateCondition = TableQuery.GenerateFilterConditionForDate("Timestamp", QueryComparisons.GreaterThanOrEqual, DateTime.UtcNow.AddDays(-days));
+                var condition = TableQuery.CombineFilters(partitionCondition, TableOperators.And, dateCondition);
+                TableQuery<DeviceData> query = new TableQuery<DeviceData>().Where(condition);
+                var tableData = await table.ExecuteQuerySegmentedAsync(query, token);
+                foreach (DeviceData customerEntity in tableData)
+                {
+                    deviceData.Add(customerEntity);
+                }
+                return deviceData;
             }
             catch (Exception exception)
             {

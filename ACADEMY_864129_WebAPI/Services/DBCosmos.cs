@@ -32,5 +32,15 @@ namespace ACADEMY_864129_WebAPI.Services
             //}
         }
 
+        //public static List<TelemeteryData> DisplayTableRecords(CloudTable table)
+        //{
+        //    List<TelemeteryData> teleCount = new List<TelemeteryData>();
+        //    TableQuery<TelemeteryData> tableQuery = new TableQuery<TelemeteryData>();
+        //    foreach (TelemeteryData customerEntity in table.ExecuteQuerySegmentedAsync(tableQuery, null).Result)
+        //    {
+        //        teleCount.Add(customerEntity);
+        //    }
+        //    return teleCount;
+        //}
     }
 }
