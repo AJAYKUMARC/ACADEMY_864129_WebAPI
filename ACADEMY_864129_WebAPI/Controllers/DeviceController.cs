@@ -32,7 +32,7 @@ namespace ACADEMY_864129_WebAPI.Controllers
         [HttpGet("GetAlertData")]
         public async Task<IActionResult> GetAlertData([FromQuery] int days)
         {
-            var alertData = await tableStorage.GetAlertData(30);
+            var alertData = await tableStorage.GetAlertData(days);
             return Ok(alertData);
         }
 
