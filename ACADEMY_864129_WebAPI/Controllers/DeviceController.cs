@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ACADEMY_864129_WebAPI.Models;
 using ACADEMY_864129_WebAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -43,6 +44,18 @@ namespace ACADEMY_864129_WebAPI.Controllers
         {
             var telemetryData = await cosmosDataBaseService.GetTelemetryData();
             return Ok(telemetryData);
+        }
+
+        [HttpPost("ConfigureIoTHub")]
+        public async Task<IActionResult> ConfigureIoTHub([FromBody] DeviceData deviceDate)
+        {
+            return Ok();
+        }
+
+        [HttpGet("GetIoTHubInfo")]
+        public async Task<IActionResult> GetConnectedDevice()
+        {
+            return Ok();
         }
 
         [HttpGet("GetStarted")]

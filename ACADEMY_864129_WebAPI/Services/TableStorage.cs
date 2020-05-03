@@ -44,6 +44,7 @@ namespace ACADEMY_864129_WebAPI.Services
         }
         /// <summary>
         /// Query the Azure Table and Gets the Data
+        /// if Date is 0 it will get all the Data
         /// </summary>
         /// <param name="groupByParameter">PartitionKey Value</param>
         /// <returns>List of Device Data</returns>
@@ -57,6 +58,7 @@ namespace ACADEMY_864129_WebAPI.Services
                 CloudTableClient client = storageAccount.CreateCloudTableClient();
                 CloudTable table = client.GetTableReference(appSettings.TableName);
                 var partitionCondition = string.Empty;
+                var dateCondition = string.Empty;
                 if (groupByParameter != null)
                 {
                     partitionCondition = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, groupByParameter);
@@ -68,7 +70,14 @@ namespace ACADEMY_864129_WebAPI.Services
                     partitionCondition = TableQuery.CombineFilters(cd1, TableOperators.Or, cd2);
 
                 }
-                var dateCondition = TableQuery.GenerateFilterConditionForDate("Timestamp", QueryComparisons.GreaterThanOrEqual, DateTime.UtcNow.AddDays(-days));
+                if (days == 0)
+                {
+                    dateCondition = TableQuery.GenerateFilterConditionForDate("Timestamp", QueryComparisons.LessThanOrEqual, DateTime.UtcNow);
+                }
+                else
+                {
+                    dateCondition = TableQuery.GenerateFilterConditionForDate("Timestamp", QueryComparisons.GreaterThanOrEqual, DateTime.UtcNow.AddDays(-days));
+                }
                 var condition = TableQuery.CombineFilters(partitionCondition, TableOperators.And, dateCondition);
                 TableQuery<DeviceData> query = new TableQuery<DeviceData>().Where(condition);
                 var tableData = await table.ExecuteQuerySegmentedAsync(query, token);
