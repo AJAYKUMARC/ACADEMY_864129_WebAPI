@@ -10,30 +10,39 @@ namespace ACADEMY_864129_WebAPI.Controllers
     [Route("api/[controller]")]
     public class DeviceController : ControllerBase
     {
-        private readonly ITableStorage tableStorage;
-        public DeviceController(ITableStorage tableStorage)
+        private readonly ITableStorage tableStorageService;
+        private readonly ICosmosDataBase cosmosDataBaseService;
+        public DeviceController(ITableStorage tableStorageService, ICosmosDataBase cosmosDataBaseService)
         {
-            this.tableStorage = tableStorage;
+            this.tableStorageService = tableStorageService;
+            this.cosmosDataBaseService = cosmosDataBaseService;
         }
-        [HttpGet("GetTelemetryData")]
-        public async Task<IActionResult> GetTelemetryData([FromQuery] int days)
+        [HttpGet("GetTelemetryDataTable")]
+        public async Task<IActionResult> GetTelemetryDataFromTable([FromQuery] int days)
         {
-            var telemetryData = await tableStorage.GetTelemetryData(days);
+            var telemetryData = await tableStorageService.GetTelemetryData(days);
             return Ok(telemetryData);
         }
 
-        [HttpGet("GetNormalData")]
-        public async Task<IActionResult> GetPositiveData([FromQuery] int days)
+        [HttpGet("GetNormalDataTable")]
+        public async Task<IActionResult> GetPositiveDataFromTable([FromQuery] int days)
         {
-            var telemetryData = await tableStorage.GetNormalData(days);
+            var telemetryData = await tableStorageService.GetNormalData(days);
             return Ok(telemetryData);
         }
 
-        [HttpGet("GetAlertData")]
-        public async Task<IActionResult> GetAlertData([FromQuery] int days)
+        [HttpGet("GetAlertDataTable")]
+        public async Task<IActionResult> GetAlertDataFromTable([FromQuery] int days)
         {
-            var alertData = await tableStorage.GetAlertData(days);
+            var alertData = await tableStorageService.GetAlertData(days);
             return Ok(alertData);
+        }
+
+        [HttpGet("GetTelemetryDataCosmos")]
+        public async Task<IActionResult> GetTelemetryDataFromCosmos([FromQuery] int days)
+        {
+            var telemetryData = await cosmosDataBaseService.GetTelemetryData();
+            return Ok(telemetryData);
         }
 
         [HttpGet("GetStarted")]

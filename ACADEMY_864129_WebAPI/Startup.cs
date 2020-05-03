@@ -36,6 +36,7 @@ namespace ACADEMY_864129_WebAPI
             IConfigurationSection appSettings = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettings);
             services.AddScoped<ITableStorage, TableStorage>();
+            services.AddScoped<ICosmosDataBase, CosmosDataBase>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
