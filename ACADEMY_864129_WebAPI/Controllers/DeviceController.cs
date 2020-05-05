@@ -48,14 +48,14 @@ namespace ACADEMY_864129_WebAPI.Controllers
             return Ok(telemetryData);
         }
 
-        [HttpPost("ConfigureIoTHub")]
+        [HttpPost("MessageToDevice")]
         public async Task<IActionResult> ConfigureIoTHub([FromBody] DeviceData deviceDate)
         {
             await configIoTHubService.MessageToIoTHub(deviceDate);
             return Ok();
         }
 
-        [HttpGet("GetIoTHubInfo")]
+        [HttpGet("GetConfigInfo")]
         public async Task<IActionResult> GetConnectedDevice()
         {
             var deviceInfo = await configIoTHubService.GetConfigurationData();

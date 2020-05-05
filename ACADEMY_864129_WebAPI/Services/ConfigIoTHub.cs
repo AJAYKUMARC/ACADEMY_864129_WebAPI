@@ -34,7 +34,7 @@ namespace ACADEMY_864129_WebAPI.Services
         public async Task MessageToIoTHub(DeviceData deviceData)
         {
             ServiceClient serviceClient = ServiceClient.CreateFromConnectionString(appSettings.IoTHubConnectionString);
-            string message = String.Format("The temperature is {0}°C. The Humidity is {1} and Status is {2} ",
+            string message = String.Format("The temperature is {0}°C. The Humidity is {1} and Door Status is {2} ",
                          deviceData.Temperature, deviceData.Humidity, deviceData.DoorStatus);
             var commandMessage = new Message(Encoding.ASCII.GetBytes(message));
             await serviceClient.SendAsync(deviceData.DeviceId, commandMessage);
