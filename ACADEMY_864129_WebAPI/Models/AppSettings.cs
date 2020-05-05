@@ -13,5 +13,6 @@ namespace ACADEMY_864129_WebAPI.Models
         public string CosmosContainerName { get; set; }
         public string CosmosEndPointURL { get; set; }
         public string CosmosPrimaryKey { get; set; }
+        public string IoTHubConnectionString { get;  set; }
     }
 }

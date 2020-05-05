@@ -37,6 +37,7 @@ namespace ACADEMY_864129_WebAPI
             services.Configure<AppSettings>(appSettings);
             services.AddScoped<ITableStorage, TableStorage>();
             services.AddScoped<ICosmosDataBase, CosmosDataBase>();
+            services.AddScoped<IConfigIoTHub, ConfigIoTHub>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

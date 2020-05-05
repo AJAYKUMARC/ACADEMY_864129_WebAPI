@@ -13,10 +13,12 @@ namespace ACADEMY_864129_WebAPI.Controllers
     {
         private readonly ITableStorage tableStorageService;
         private readonly ICosmosDataBase cosmosDataBaseService;
-        public DeviceController(ITableStorage tableStorageService, ICosmosDataBase cosmosDataBaseService)
+        private readonly IConfigIoTHub configIoTHubService;
+        public DeviceController(ITableStorage tableStorageService, ICosmosDataBase cosmosDataBaseService, IConfigIoTHub configIoTHubService)
         {
             this.tableStorageService = tableStorageService;
             this.cosmosDataBaseService = cosmosDataBaseService;
+            this.configIoTHubService = configIoTHubService;
         }
         [HttpGet("GetTelemetryDataTable")]
         public async Task<IActionResult> GetTelemetryDataFromTable([FromQuery] int days)
@@ -49,13 +51,15 @@ namespace ACADEMY_864129_WebAPI.Controllers
         [HttpPost("ConfigureIoTHub")]
         public async Task<IActionResult> ConfigureIoTHub([FromBody] DeviceData deviceDate)
         {
+            await configIoTHubService.MessageToIoTHub(deviceDate);
             return Ok();
         }
 
         [HttpGet("GetIoTHubInfo")]
         public async Task<IActionResult> GetConnectedDevice()
         {
-            return Ok();
+            var deviceInfo = await configIoTHubService.GetConfigurationData();
+            return Ok(deviceInfo);
         }
 
         [HttpGet("GetStarted")]
