@@ -12,5 +12,6 @@ namespace ACADEMY_864129_WebAPI.Models
         public double Temperature { get; set; }
         public double Humidity { get; set; }
         public bool DoorStatus { get; set; }
+        public string CaptureTime { get; set; }
     }
 }

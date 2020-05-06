@@ -79,8 +79,8 @@ namespace ACADEMY_864129_WebAPI.Services
                     dateCondition = TableQuery.GenerateFilterConditionForDate("Timestamp", QueryComparisons.GreaterThanOrEqual, DateTime.UtcNow.AddDays(-days));
                 }
                 var condition = TableQuery.CombineFilters(partitionCondition, TableOperators.And, dateCondition);
-                TableQuery<DeviceData> query = new TableQuery<DeviceData>().Where(condition)
-                    .Select(new List<string> { "Temperature", "DoorStatus", "Humidity", "Timestamp" });
+                TableQuery<DeviceData> query = new TableQuery<DeviceData>().Where(condition);
+                    //.Select(new List<string> { "Temperature", "DoorStatus", "Humidity", "Timestamp" });
                 var tableData = await table.ExecuteQuerySegmentedAsync(query, token);
                 foreach (DeviceData customerEntity in tableData)
                 {
