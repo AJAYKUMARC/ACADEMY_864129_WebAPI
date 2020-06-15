@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using NLog;
 
 namespace ACADEMY_864129_WebAPI
 {
@@ -45,14 +46,17 @@ namespace ACADEMY_864129_WebAPI
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                app.UseExceptionHandler("/error-local-development");
             }
+           
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
             app.UseAuthorization();
+
+            NLog.LogManager.LoadConfiguration("nlog.config");
 
             app.UseEndpoints(endpoints =>
             {

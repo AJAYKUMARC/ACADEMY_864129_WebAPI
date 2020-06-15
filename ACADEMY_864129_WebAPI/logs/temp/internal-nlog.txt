@@ -1,0 +1,10 @@
+2020-06-15 12:09:36.2162 Info Message Template Auto Format enabled
+2020-06-15 12:09:36.5885 Error Error parsing layout aspnet-request-url will be ignored. Exception: System.ArgumentException: LayoutRenderer cannot be found: 'aspnet-request-url'. Is NLog.Web not included?
+   at NLog.Config.Factory`2.CreateInstance(String itemName)
+   at NLog.Layouts.LayoutParser.GetLayoutRenderer(ConfigurationItemFactory configurationItemFactory, String name, Nullable`1 throwConfigExceptions)
+2020-06-15 12:09:36.9643 Error Error parsing layout aspnet-mvc-action will be ignored. Exception: System.ArgumentException: LayoutRenderer cannot be found: 'aspnet-mvc-action'. Is NLog.Web not included?
+   at NLog.Config.Factory`2.CreateInstance(String itemName)
+   at NLog.Layouts.LayoutParser.GetLayoutRenderer(ConfigurationItemFactory configurationItemFactory, String name, Nullable`1 throwConfigExceptions)
+2020-06-15 12:09:36.9803 Info Adding target FileTarget(Name=ownFile-web)
+2020-06-15 12:09:36.9980 Info Adding target NullTarget(Name=blackhole)
+2020-06-15 12:09:37.0921 Info Validating config: TargetNames=blackhole, ownFile-web, ConfigItems=33, FilePath=C:\Users\AJAY KUMAR CHEPURI\Desktop\864129\ACADEMY_864129_WebAPI\ACADEMY_864129_WebAPI\bin\Debug\netcoreapp3.1\nlog.config
